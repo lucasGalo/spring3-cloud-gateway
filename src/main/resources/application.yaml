@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: spring3-cloud-gateway
+
+# ===============================
+# = ACTUATOR
+# ===============================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus", "health"]
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    export:
+      prometheus:
+        enabled: true
+  # ===============================
+  # = OPENZIPKIN
+  # ===============================
+  tracing:
+    enabled: true
+    sampling:
+      probability: 0.2   # 20% das requisições são amostradas
+  zipkin:
+    tracing:
+      endpoint: ${URL_OPENZIPKIN:http://192.168.0.100:9411/api/v2/spans}
+# ===============================
+# = LogBack e LOKI
+# ===============================
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# ===============================
+# = Variaveis de ambiente para outros serviços
+# ===============================
+vars:
+  URL_LOKI: ${URL_LOKI:http://192.168.0.100:3100/loki/api/v1/push}
+
+services:
+  users: ${USERS_SERVICE_URL:http://localhost:8383}
+  auth: ${AUTH_SERVICE_URL:http://localhost:9090}

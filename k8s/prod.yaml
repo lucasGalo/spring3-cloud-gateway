@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring3-cloud-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring3-cloud-gateway
+  template:
+    metadata:
+      labels:
+        app: spring3-cloud-gateway
+    spec:
+      containers:
+        - name: spring3-cloud-gateway
+          image: lucasgalo/spring3-cloud-gateway:0.1.0   # substitua pela sua imagem
+          ports:
+            - containerPort: 8080
+          env:
+            - name: URL_OPENZIPKIN
+              value: "http://zipkin:9411/api/v2/spans"
+            - name: URL_LOKI
+              value: "http://loki:3100/loki/api/v1/push"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: USERS_SERVICE_URL
+              value: "http://api-teste:8383"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:9090"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring3-cloud-gateway
+spec:
+  type: NodePort
+  selector:
+    app: spring3-cloud-gateway
+  ports:
+    - port: 8080        # porta interna do pod
+      targetPort: 8080  # porta do container
+      nodePort: 30086   # porta externa válida (faixa 30000–32767)
+      protocol: TCP
+      name: http
