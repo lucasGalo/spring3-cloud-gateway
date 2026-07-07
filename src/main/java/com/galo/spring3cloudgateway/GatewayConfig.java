@@ -11,15 +11,16 @@ public class GatewayConfig {
 
   @Value("${services.users}")
   private String usersServiceUrl;
+  @Value("${services.auth}")
+  private String authServiceUrl;
   @Bean
   public RouteLocator customRouteLocator(RouteLocatorBuilder builder, AuthFilter authFilter) {
     return builder.routes()
             .route("users", r -> r.path("/users/**")
                     .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config())))
                     .uri(usersServiceUrl))
-//            .route("courses", r -> r.path("/courses/**")
-//                    .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config())))
-//                    .uri("http://localhost:8082"))
+            .route("auth", r -> r.path("/auth/**")
+                    .uri(authServiceUrl))
             .build();
   }
 }
