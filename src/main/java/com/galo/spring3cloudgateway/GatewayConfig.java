@@ -20,6 +20,7 @@ public class GatewayConfig {
                     .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config())))
                     .uri(usersServiceUrl))
             .route("auth", r -> r.path("/auth/**")
+                    .filters(f -> f.stripPrefix(1))
                     .uri(authServiceUrl))
             .build();
   }
