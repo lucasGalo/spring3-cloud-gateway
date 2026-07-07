@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.galo</groupId>
 	<artifactId>spring3-cloud-gateway</artifactId>
-	<version>0.1.2</version>
+	<version>0.1.3</version>
 	<name>spring3-cloud-gateway</name>
 	<description>spring3-cloud-gateway</description>
 	<url/>

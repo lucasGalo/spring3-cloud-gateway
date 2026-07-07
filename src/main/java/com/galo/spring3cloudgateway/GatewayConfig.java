@@ -17,10 +17,13 @@ public class GatewayConfig {
   public RouteLocator customRouteLocator(RouteLocatorBuilder builder, AuthFilter authFilter) {
     return builder.routes()
             .route("users", r -> r.path("/users/**")
-                    .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config())))
+                    .filters(f -> f.filter(authFilter.apply(new AuthFilter.Config()))
+                            .filter(new LoggingFilter()))
                     .uri(usersServiceUrl))
             .route("auth", r -> r.path("/auth/**")
-                    .filters(f -> f.stripPrefix(1))
+                    // cliente chama /auth/login → Gateway remove /auth → backend recebe /login
+                    .filters(f -> f.stripPrefix(1)
+                            .filter(new LoggingFilter()))
                     .uri(authServiceUrl))
             .build();
   }
